@@ -1,10 +1,11 @@
 import React from 'react';
 import List from './List.js';
-import TodoResource from "./API";
+import TodoResource from "../API";
+import {Button, Input, Card, message, Col, Row} from 'antd';
 
 
 class TodoList extends React.Component {
-    state = { inputValue: '' };
+    state = {inputValue: ''};
 
     componentDidMount() {
         TodoResource.fetchAllData()
@@ -14,12 +15,13 @@ class TodoList extends React.Component {
 
     pushInput = () => {
         if (this.state.inputValue !== '') {
-            this.props.addNewtodo(this.state.inputValue, false);
+            this.props.addNewtodo(this.state.inputValue, "active");
+            message.success('Added Successfully');
         }
     }
 
     handleInput = (event) => {
-        this.setState({ inputValue: event.target.value });
+        this.setState({inputValue: event.target.value});
     }
 
     //FILTER Functions
@@ -33,43 +35,48 @@ class TodoList extends React.Component {
         TodoResource.fetchAllData()
             .then(res => res.json())
             .then(res => this.props.refreshTodos(res._embedded.todos));
+        message.success('Filtered to All Data');
     }
     filterAllActive = () => {
         this.refreshState();
         TodoResource.fetchAllActive()
             .then(res => res.json())
             .then(res => this.props.refreshTodos(res._embedded.todos));
+        message.success('Filtered to All Active data');
     }
     filterAllComplete = () => {
         this.refreshState();
         TodoResource.fetchAllCompleted()
             .then(res => res.json())
             .then(res => this.props.refreshTodos(res._embedded.todos));
+        message.success('Filtered to All Complete data');
     }
+
     //end FILTER FUNCTIONS
 
     render() {
         return (
             <div>
                 <div>
-                    <input className="input-text" type="text" onChange={this.handleInput} />
-                    <button className="addButton" onClick={this.pushInput}>Add</button>
+                    <Input className="Input-text" type="text" onChange={this.handleInput}/>
+                    <Button className="addButton" icon="plus" type="primary" onClick={this.pushInput}>Add</Button>
                 </div>
-                <ol>
-                    <List todos={this.props.todos} />
-                </ol>
+                <Row><Col>&nbsp;</Col></Row>
+                <Card size="large" title="My ToDo List" style={{width: 600}}>
+                    <ol>
+                        <List todos={this.props.todos}/>
+                    </ol>
+                </Card>
 
-                <ol>
-                    <button className="addButton" onClick = {this.filterAllData}> All </button>
-                    <button className="addButton" onClick = {this.filterAllActive}> Active </button>
-                    <button className="addButton" onClick = {this.filterAllComplete}> Complete </button>
+                <ol className="buttonGroup">
+                    <Button icon="search" onClick={this.filterAllData}> All </Button>
+                    <Button icon="border" onClick={this.filterAllActive}> Active </Button>
+                    <Button icon="check" onClick={this.filterAllComplete}> Complete </Button>
                 </ol>
             </div>
         );
     }
 }
-
-
 
 
 export default TodoList;

@@ -1,6 +1,6 @@
 import React from 'react';
 import ListElements from './ListElements.js';
-import TodoResource from "./API"
+import TodoResource from "../API"
 
 
 class List extends React.Component{
